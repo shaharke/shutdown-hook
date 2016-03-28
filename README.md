@@ -52,8 +52,8 @@ shutdownHook.on('ShutdownEnded', (e) => log.info('it has ended'))
 | Event | Property | Type | Description | Optional |
 | :---: | :------: | :--: | :---------- | :------: |
 | ComponentShutdown | name | String | Name of the component that's being shutdown | No|
-| ShutdownEnded | code | Number | The exit code the library used when calling `process.exit()`| Yes |
-|| error | Error | The error the library caught in case the sequence failed to run | No|
+| ShutdownEnded | code | Number | The exit code the library used when calling `process.exit()`| No |
+|| error | Error | The error the library caught in case the sequence failed to run | Yes|
 
 
 
