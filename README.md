@@ -1,4 +1,4 @@
-# Shutdown-Hook
+# Shutdown-Hook [![Build Status](https://travis-ci.org/shaharke/shutdown-hook.svg?branch=master)](https://travis-ci.org/shaharke/shutdown-hook)
 
 Shutdown-Hook is an injectable shutdown hook (well dah..) module for Node.js applications.
 
