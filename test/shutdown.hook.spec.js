@@ -20,7 +20,7 @@ describe('Shutdown hook', function() {
 
     it('should accept just function with no name', function() {
       hook.add(function() {})
-      expect(hook.shutdownFunctions).to.have.property('anonymous#1')
+      expect(hook.shutdownFunctions[0]).to.have.property('name', 'anonymous#1')
     })
   })
 
@@ -44,14 +44,50 @@ describe('Shutdown hook', function() {
       }
     }
 
-    it('should call shutdown functions in the order they were added', function() {
-      var first = sinon.spy(slowFn());
-      var second = sinon.spy();
-      hook.add(first);
-      hook.add(second);
-      return hook.shutdown().then(function() {
-        expect(first).to.be.calledBefore(second);
-      });
+    describe('when order was not specified', function() {
+
+      it('should call shutdown functions in the order they were added', function() {
+        var first = sinon.spy(slowFn());
+        var second = sinon.spy();
+        hook.add(first);
+        hook.add(second);
+        return hook.shutdown().then(function() {
+          expect(first).to.be.calledBefore(second);
+        });
+      })
+    })
+
+    describe('when order was specified', function() {
+
+      it('should call shutdown functions sorted by their order', function() {
+        var first = sinon.spy(slowFn());
+        var second = sinon.spy();
+        hook.add(second, {order: 10});
+        hook.add(first, {order: 1});
+        return hook.shutdown().then(function() {
+          expect(first).to.be.calledBefore(second);
+        });
+      })
+
+      it('should support explicit and implicit ordering', function() {
+        var first = sinon.spy(slowFn());
+        var second = sinon.spy();
+        hook.add(second);
+        hook.add(first, {order: -1});
+        return hook.shutdown().then(function() {
+          expect(first).to.be.calledBefore(second);
+        });
+      })
+
+      it('should support names and order', function() {
+        var first = sinon.spy(slowFn());
+        var second = sinon.spy();
+        hook.add(second, {order: 2, name: "second"});
+        hook.add(first, {order: 1, name: "first"});
+        return hook.shutdown().then(function() {
+          expect(first).to.be.calledBefore(second);
+        });
+      })
     })
 
     it('should exit with exit code 1 in case the shutdown operation exceeds the provided timeout', function() {
@@ -121,8 +157,8 @@ describe('Shutdown hook', function() {
     })
 
     it('should emit "ComponentShutdown" event for each shutdown function', function() {
-      hook.add('foo', function(){});
-      hook.add(function(){});
+      hook.add(function(){}, {name: "foo"});
+      hook.add(function(){}, {order: 10});
 
       var spy = sinon.spy();
       hook.on('ComponentShutdown', spy);
@@ -130,9 +166,13 @@ describe('Shutdown hook', function() {
         expect(spy).to.be.calledTwice;
         expect(spy.firstCall.args[0]).to.not.be.undefined;
         expect(spy.firstCall.args[0]).to.have.property("name", "foo");
+        expect(spy.firstCall.args[0]).to.have.property("order", 0);
+        expect(spy.firstCall.args[0]).to.have.property("index", 0);
 
         expect(spy.secondCall.args[0]).to.not.be.undefined;
         expect(spy.secondCall.args[0]).to.have.property("name");
+        expect(spy.secondCall.args[0]).to.have.property("order", 10);
+        expect(spy.secondCall.args[0]).to.have.property("index", 1);
       })
     })
   })

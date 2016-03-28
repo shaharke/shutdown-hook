@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/shaharke/shutdown-hook#readme",
   "dependencies": {
-    "bluebird": "3.3.4"
+    "bluebird": "3.3.4",
+    "lodash": "4.6.1"
   },
   "devDependencies": {
     "chai": "3.5.0",
