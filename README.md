@@ -45,7 +45,7 @@ This might be useful when listening to events (see below). If no name was given,
 
 `shutdownHook.register()`
 
-Registers the shutdown hook to trigger the shutdown sequence when receiving SIGTERM, SIGINT or `process.on('message', (m) => { m == 'shutdown' })`.
+Registers the shutdown hook to trigger the shutdown sequence when receiving SIGTERM, SIGINT or "shutdown" messages sent through the `process` event emitter. 
 
 ### Listen to shutdown sequence events:
 
