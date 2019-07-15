@@ -90,6 +90,73 @@ describe('Shutdown hook', function() {
       })
     })
 
+    describe('setting lifo to true', function() {
+
+      it('should call the shutdown functions in reverse order', function() {
+        var exitSpy = sinon.spy();
+        var hook = new ShutdownHook({ lifo: true });
+        hook.exit = exitSpy
+        var f1 = sinon.spy();
+        var f2 = sinon.spy();
+        hook.add(f1);
+        hook.add(f2);
+        return hook.shutdown().then(function() {
+          expect(f2).to.be.calledBefore(f1);
+        })
+      })
+    })
+
+    describe('setting lifo to false', () => {
+
+      it('should call the shutdown functions in order of insertion', () => {
+        var exitSpy = sinon.spy();
+        var hook = new ShutdownHook({ lifo: false });
+        hook.exit = exitSpy
+        var f1 = sinon.spy();
+        var f2 = sinon.spy();
+        hook.add(f1);
+        hook.add(f2);
+        return hook.shutdown().then(function() {
+          expect(f1).to.be.calledBefore(f2);
+        });
+      })
+    })
+
+    describe('not setting lifo', () => {
+
+      it('should call the shutdown functions in order of insertion', () => {
+        var exitSpy = sinon.spy();
+        var hook = new ShutdownHook();
+        hook.exit = exitSpy
+        var f1 = sinon.spy();
+        var f2 = sinon.spy();
+        hook.add(f1);
+        hook.add(f2);
+        return hook.shutdown().then(function() {
+          expect(f1).to.be.calledBefore(f2);
+        });
+      })
+    })
+
+    describe('setting both order and lifo', () => {
+      it('should take into account only order', () => {
+        var exitSpy = sinon.spy();
+        var hook = new ShutdownHook({ lifo: true });
+        hook.exit = exitSpy
+        var f1 = sinon.spy();
+        var f2 = sinon.spy();
+        var f3 = sinon.spy();
+        var f4 = sinon.spy();
+        hook.add(f1, {name: "f1"});
+        hook.add(f2, { order: 2, name: "f2"});
+        hook.add(f3, { order: 1, name: "f3" });
+        return hook.shutdown().then(function() {
+          expect(f1).to.be.calledBefore(f3);
+          expect(f3).to.be.calledBefore(f2);
+        });
+      })
+    })
+
     it('should exit with exit code 1 in case the shutdown operation exceeds the provided timeout', function() {
       var exitSpy = sinon.spy();
       var timeout = 200;

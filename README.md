@@ -18,13 +18,19 @@ let shutdownHook = new ShutdownHook(options)
 | Property | Description | Default Value |
 | :------: | :---------- | :-----------: |
 | timeout  | Sets a timeout in ms for the shutdown operation to complete. If the shutdown operations exceed the timeout, the process will exit with code 1| 10000ms |
+| lifo     | Reverses the execution order of the shutdown functions| false |
 
 
 ### Add shutdown functions:
 
 `shutdownHook.add(_ => doSomething(), options)`
 
-Shutdown functions are executed in the order they were added unless `options.order` was specified. Shutdown function should return nothing, a value, a Promise, or throw an error.
+Shutdown functions are executed in the order they were added unless: 
+
+1. `options.order` was specified. 
+2. `lifo: true` was specified when instantiating the hook.
+
+Shutdown function can return nothing, a value, a Promise, or throw an error.
 A rejected promise or error will stop the shutdown sequence (subsequent functions will not be run) and exit the process with code 1.
 
 You can also name shutdown functions:
