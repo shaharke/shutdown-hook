@@ -22,7 +22,7 @@
   "homepage": "https://github.com/shaharke/shutdown-hook#readme",
   "dependencies": {
     "bluebird": "3.3.4",
-    "lodash": "4.17.14"
+    "lodash": "4.17.19"
   },
   "devDependencies": {
     "mocha": "6.1.4",
