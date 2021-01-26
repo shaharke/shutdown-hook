@@ -35,7 +35,7 @@ A rejected promise or error will stop the shutdown sequence (subsequent function
 
 You can also name shutdown functions:
 
-`shutdownHook.add('database', _ => doSomething(), {name: "foo"})`
+`shutdownHook.add(_ => doSomething(), {name: "foo"})`
 
 This might be useful when listening to events (see below). If no name was given, the library auto-generates a name for consistency.
 
